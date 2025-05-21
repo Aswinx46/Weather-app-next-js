@@ -12,19 +12,27 @@ import { useEffect, useState } from "react"
 export default function WeatherDetails() {
     // Format the time string
     const [weather, setWeather] = useState<WeatherDetailsProps | null>(null)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const weatherString = localStorage.getItem('weather')
-        if (weatherString) {
-            try {
-                const parsedWeather = JSON.parse(weatherString)
-                setWeather(parsedWeather)
-            } catch (err) {
-                console.error("Error parsing weather data from localStorage:", err)
+        try {
+            const weatherString = localStorage.getItem("weather")
+            if (weatherString) {
+                const parsed = JSON.parse(weatherString)
+                setWeather(parsed)
             }
+        } catch (err) {
+            console.error("Failed to parse weather from localStorage", err)
+        } finally {
+            setLoading(false)
         }
     }, [])
-    if(!weather) {
+
+    if (loading) {
+        return <div className="text-white h-screen flex justify-center items-center">Loading...</div>
+    }
+
+    if (!weather) {
         notFound()
     }
     const formattedTime = new Date(weather.time).toLocaleString("en-US", {
