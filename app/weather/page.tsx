@@ -4,10 +4,13 @@ import { useState } from "react"
 import axios from 'axios'
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
+import LoadingPage from "./loading"
 export default function FindWeather() {
     const router = useRouter()
     const [location, setLocation] = useState<string>('')
+    const [loading, setLoading] = useState(false)
     const handleSearch = async () => {
+        setLoading(true)
         try {
             const response = await axios.get('/api/weather', {
                 params: {
@@ -19,8 +22,11 @@ export default function FindWeather() {
             router.push('/weather/weatherDetails')
         } catch (error) {
             console.log('error while finding the weather', error)
+        } finally {
+            setLoading(false)
         }
     }
+    if (loading) return <LoadingPage />
 
     return (<>
         <div className="bg-gradient-to-br from-gray-900 to-black h-screen flex items-center justify-center px-4">
