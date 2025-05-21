@@ -5,21 +5,27 @@ import { Cloud, MapPin, Wind, Clock, Thermometer } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { notFound } from "next/navigation"
 import { WeatherDetailsProps } from "@/types/weatherTypes"
+import { useEffect, useState } from "react"
 
 
 
 export default function WeatherDetails() {
     // Format the time string
-    const weatherString = localStorage.getItem('weather');
+    const [weather, setWeather] = useState<WeatherDetailsProps | null>(null)
 
-    let weather: WeatherDetailsProps | null = null;
-
-    if (weatherString) {
-        weather = JSON.parse(weatherString) as WeatherDetailsProps;
-    }
-    if (!weather) {
+    useEffect(() => {
+        const weatherString = localStorage.getItem('weather')
+        if (weatherString) {
+            try {
+                const parsedWeather = JSON.parse(weatherString)
+                setWeather(parsedWeather)
+            } catch (err) {
+                console.error("Error parsing weather data from localStorage:", err)
+            }
+        }
+    }, [])
+    if(!weather) {
         notFound()
-
     }
     const formattedTime = new Date(weather.time).toLocaleString("en-US", {
         weekday: "long",
