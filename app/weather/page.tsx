@@ -14,15 +14,10 @@ export default function FindWeather() {
 
 
     function validateLocationName(name: string) {
-        // Trim whitespace from start and end
+
         if (!name || name.trim() === "") {
             return { valid: false, error: "Location name cannot be empty." };
         }
-
-        // Regex explanation:
-        // ^[a-zA-Z\s'-]+$ means:
-        // - start to end only letters (a-zA-Z), spaces (\s), apostrophes ('), and hyphens (-)
-        // - no digits or other special chars allowed
         const regex = /^[a-zA-Z\s'-]+$/;
 
         if (!regex.test(name)) {
@@ -48,7 +43,7 @@ export default function FindWeather() {
             })
             localStorage.setItem('weather', JSON.stringify(response.data))
             router.push('/weather/weatherDetails')
-
+            setLoading(false)
         } catch (error) {
             console.log('error while finding the weather', error)
         } finally {
