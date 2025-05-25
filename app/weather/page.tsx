@@ -5,20 +5,47 @@ import axios from 'axios'
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import LoadingPage from "./loading"
+import { toast } from "react-toastify"
 
 export default function FindWeather() {
     const router = useRouter()
     const [location, setLocation] = useState<string>('')
     const [loading, setLoading] = useState(false)
+
+
+    function validateLocationName(name: string) {
+        // Trim whitespace from start and end
+        if (!name || name.trim() === "") {
+            return { valid: false, error: "Location name cannot be empty." };
+        }
+
+        // Regex explanation:
+        // ^[a-zA-Z\s'-]+$ means:
+        // - start to end only letters (a-zA-Z), spaces (\s), apostrophes ('), and hyphens (-)
+        // - no digits or other special chars allowed
+        const regex = /^[a-zA-Z\s'-]+$/;
+
+        if (!regex.test(name)) {
+            return { valid: false, error: "Location name can only contain letters, spaces, hyphens, and apostrophes." };
+        }
+
+        return { valid: true, error: null };
+    }
+
     const handleSearch = async () => {
+        const validateName = validateLocationName(location)
+        if (!validateName.valid) {
+            toast.error(validateName.error)
+            return
+        }
         setLoading(true)
         try {
+
             const response = await axios.get('/api/weather', {
                 params: {
                     location
                 }
             })
-            console.log(response.data)
             localStorage.setItem('weather', JSON.stringify(response.data))
             router.push('/weather/weatherDetails')
 
