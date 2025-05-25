@@ -5,6 +5,7 @@ import axios from 'axios'
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import LoadingPage from "./loading"
+
 export default function FindWeather() {
     const router = useRouter()
     const [location, setLocation] = useState<string>('')
@@ -20,6 +21,7 @@ export default function FindWeather() {
             console.log(response.data)
             localStorage.setItem('weather', JSON.stringify(response.data))
             router.push('/weather/weatherDetails')
+
         } catch (error) {
             console.log('error while finding the weather', error)
         } finally {
